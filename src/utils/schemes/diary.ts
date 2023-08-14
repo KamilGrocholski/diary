@@ -18,13 +18,15 @@ export type DiarySchemes = {
     [Key in keyof _DiarySchemes]: z.infer<_DiarySchemes[Key]>
 }
 export const diarySchemes = {
-    create: baseDiarySchema.pick({ id: true, title: true }),
+    create: baseDiarySchema.pick({ title: true }),
     getById: baseDiarySchema.pick({ id: true }),
     remove: baseDiarySchema.pick({ id: true }),
-    addEntry: baseDiaryEntrySchema.pick({
-        title: true,
-        content: true,
-    }),
+    addEntry: baseDiaryEntrySchema
+        .pick({
+            title: true,
+            content: true,
+        })
+        .and(baseDiarySchema.pick({ id: true })),
     editEntry: baseDiaryEntrySchema.pick({
         id: true,
         title: true,

@@ -1,4 +1,3 @@
-import { TRPCError } from "@trpc/server"
 import {
     createTRPCRouter,
     diaryOwnerProcedure,
@@ -11,6 +10,28 @@ export type DiaryRouterOutputs = RouterOutputs["diary"]
 export type DiaryRouterInputs = RouterInputs["diary"]
 
 export const diaryRouter = createTRPCRouter({
+    getById: diaryOwnerProcedure
+        .input(diarySchemes.getById)
+        .query(async ({ ctx, input }) => {
+            const { id } = input
+
+            const diaries = await ctx.prisma.diary.findUnique({
+                where: {
+                    id,
+                },
+                include: {
+                    entries: {
+                        orderBy: {
+                            createdAt: "desc",
+                        },
+                    },
+                    _count: true,
+                    user: true,
+                },
+            })
+
+            return diaries
+        }),
     getAll: protectedProcedure.query(({ ctx }) => {
         return ctx.prisma.diary.findMany({
             where: {
@@ -52,34 +73,14 @@ export const diaryRouter = createTRPCRouter({
                 },
             })
         }),
-    addEntry: diaryOwnerProcedure
+    addEntry: protectedProcedure
         .input(diarySchemes.addEntry)
-        .mutation(async ({ ctx, input }) => {
-            const { title, content } = input
-
-            const todayStart = new Date(new Date().setHours(0, 0, 0, 0))
-            const todayEnd = new Date(new Date().setHours(23, 59, 59, 999))
-
-            const diaryEntry = await ctx.prisma.diaryEntry.findUnique({
-                where: {
-                    diaryId: ctx.input.diaryId,
-                    createdAt: {
-                        lte: todayEnd,
-                        gte: todayStart,
-                    },
-                },
-            })
-
-            if (diaryEntry) {
-                throw new TRPCError({
-                    code: "FORBIDDEN",
-                    message: "A diary entry has already been created today.",
-                })
-            }
+        .mutation(({ ctx, input }) => {
+            const { title, content, id } = input
 
             return ctx.prisma.diaryEntry.create({
                 data: {
-                    diaryId: ctx.input.diaryId,
+                    diaryId: id,
                     title,
                     content,
                 },

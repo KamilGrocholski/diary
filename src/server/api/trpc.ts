@@ -13,7 +13,7 @@ import superjson from "superjson"
 import { ZodError } from "zod"
 import { getServerAuthSession } from "~/server/auth"
 import { prisma } from "~/server/db"
-import { baseDiaryEntrySchema } from "~/utils/schemes/diary"
+import { baseDiarySchema } from "~/utils/schemes/diary"
 
 /**
  * 1. CONTEXT
@@ -132,7 +132,7 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed)
 
 export const diaryOwnerProcedure = protectedProcedure
-    .input(baseDiaryEntrySchema.pick({ id: true }))
+    .input(baseDiarySchema.pick({ id: true }))
     .use(async ({ ctx, input, next }) => {
         const diary = await ctx.prisma.diary.findUnique({
             where: {

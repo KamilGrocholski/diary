@@ -1,9 +1,18 @@
 import Head from "next/head"
+import { useRouter } from "next/router"
+import "react-calendar/dist/Calendar.css"
+import DiariesListing from "~/components/DiariesListing"
 import SessionStateWrapper from "~/components/SessionStateWrapper"
+import StateWrapper from "~/components/StateWrapper"
 import Button from "~/components/ui/Button"
 import Layout from "~/components/ui/Layout"
+import { api } from "~/utils/api"
 
 export default function Home() {
+    const diariesQuery = api.diary.getAll.useQuery()
+
+    const router = useRouter()
+
     return (
         <>
             <Head>
@@ -17,7 +26,23 @@ export default function Home() {
                         <Button onClick={login}>Login</Button>
                     </main>
                 )}
-                User={() => <Layout>siema</Layout>}
+                User={() => (
+                    <Layout>
+                        <StateWrapper
+                            data={diariesQuery.data}
+                            isLoading={diariesQuery.isLoading}
+                            isError={diariesQuery.isError}
+                            NonEmpty={(diaries) => (
+                                <DiariesListing
+                                    diaries={diaries}
+                                    onClick={(diaryId) => {
+                                        void router.push(`/diaries/${diaryId}`)
+                                    }}
+                                />
+                            )}
+                        />
+                    </Layout>
+                )}
             />
         </>
     )
