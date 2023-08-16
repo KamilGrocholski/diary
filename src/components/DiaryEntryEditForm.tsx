@@ -74,6 +74,7 @@ const DiaryEntryEditForm: React.FC<DiaryEntryEditFormProps> = (props) => {
 
     return (
         <form
+            className="diary-container"
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onSubmit={handleSubmit(handleOnValid, handleOnError)}
         >

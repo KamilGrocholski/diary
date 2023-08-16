@@ -1,14 +1,14 @@
-import Footer from "./Footer"
+import DesktopNav from "./DesktopNav"
 import MobileNav from "./MobileNav"
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     return (
-        <div className="relative flex flex-col">
+        <div className="relative flex lg:flex-row flex-col w-full h-screen">
             <MobileNav />
-            <main className="min-h-screen py-24 px-3 container mx-auto flex flex-col items-center justify-center">
+            <DesktopNav />
+            <main className="h-screen overflow-y-scroll py-24  mx-auto w-full flex flex-col items-center justify-center">
                 {children}
             </main>
-            <Footer />
         </div>
     )
 }

@@ -4,7 +4,7 @@ import { navMenu } from "~/const/config"
 
 const MobileNav = () => {
     return (
-        <nav className="fixed bottom-0  left-0 right-0 h-14 px-4 py-2 bg-zinc-700 w-full z-50">
+        <nav className="fixed bottom-0 lg:hidden flex left-0 right-0 h-14 px-4 py-2 bg-zinc-700 w-full z-50">
             <SessionStateWrapper
                 Guest={(login) => (
                     <div>

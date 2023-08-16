@@ -22,6 +22,7 @@ const SessionStateWrapper: React.FC<SessionStateWrapperProps> = ({
         void signIn("discord")
     }
 
+    if (session.status === "loading") return <div>Checking your session</div>
     if (session.data?.user.id) return User(session, handleLogout)
     return Guest(handleLogin)
 }

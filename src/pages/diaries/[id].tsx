@@ -7,7 +7,9 @@ import "react-quill/dist/quill.snow.css"
 import DiaryEntryCreateForm from "~/components/DiaryEntryCreateForm"
 import DiaryEntryEditForm from "~/components/DiaryEntryEditForm"
 import StateWrapper from "~/components/StateWrapper"
+import Button from "~/components/ui/Button"
 import Layout from "~/components/ui/Layout"
+import Modal from "~/components/ui/Modal"
 import { api } from "~/utils/api"
 
 const QuillNoSSRWrapper = dynamic(import("react-quill"), {
@@ -61,57 +63,54 @@ export default function Diary() {
                                 >
                                     +
                                 </button>
-                                {isOpenEditor ? (
-                                    <div className="fixed p-3 inset-0 z-50 w-full h-screen bg-zinc-900">
-                                        <DiaryEntryEditForm
-                                            onSuccess={() => {
-                                                setIsOpenEditor(false)
-                                                setEditorState(null)
-                                            }}
-                                            diaryId={
-                                                editorState?.diaryId as unknown as number
-                                            }
-                                            diaryEntry={{
-                                                title: editorState?.title as unknown as string,
-                                                content:
-                                                    editorState?.content as unknown as string,
-                                            }}
-                                        />
-                                        <button
-                                            onClick={() => {
-                                                setIsOpenEditor(false)
-                                                setEditorState(null)
-                                            }}
-                                        >
-                                            Close
-                                        </button>
-                                    </div>
-                                ) : null}
-                                {isOpen ? (
-                                    <div className="fixed p-3 inset-0 z-50 w-full h-screen bg-zinc-900">
-                                        <DiaryEntryCreateForm
-                                            diaryId={diary.id}
-                                        />
-                                        <button
-                                            onClick={() => setIsOpen(false)}
-                                        >
-                                            &times;
-                                        </button>
-                                    </div>
-                                ) : null}
-                                {isOpenMenu ? (
+                                <Modal
+                                    isOpen={isOpenEditor}
+                                    close={() => {
+                                        setIsOpenEditor(false)
+                                        setEditorState(null)
+                                    }}
+                                >
+                                    <DiaryEntryEditForm
+                                        onSuccess={() => {
+                                            setIsOpenEditor(false)
+                                            setEditorState(null)
+                                        }}
+                                        diaryId={
+                                            editorState?.diaryId as unknown as number
+                                        }
+                                        diaryEntry={{
+                                            title: editorState?.title as unknown as string,
+                                            content:
+                                                editorState?.content as unknown as string,
+                                        }}
+                                    />
+                                </Modal>
+                                <Modal
+                                    isOpen={isOpen}
+                                    close={() => {
+                                        setIsOpen(false)
+                                    }}
+                                >
+                                    <DiaryEntryCreateForm
+                                        diaryId={diary.id}
+                                        onSuccess={() => {
+                                            setIsOpen(false)
+                                        }}
+                                    />
+                                </Modal>
+                                <Modal
+                                    isOpen={isOpenMenu}
+                                    close={() => {
+                                        setIsOpenMenu(false)
+                                    }}
+                                >
                                     <div className="bg-zinc-900 fixed p-3 bottom-0 left-0 right-0 z-50 flex flex-col gap-1">
                                         <button>Remove</button>
                                         <button>Remove</button>
                                         <button>Remove</button>
                                         <button>Remove</button>
-                                        <button
-                                            onClick={() => setIsOpenMenu(false)}
-                                        >
-                                            Remove
-                                        </button>
                                     </div>
-                                ) : null}
+                                </Modal>
                                 <section className="my-2 flex flex-col gap-1 w-1/2 justify-start">
                                     <h1 className="font-semibold text-lg">
                                         {diary.title}
@@ -120,7 +119,7 @@ export default function Diary() {
                                         {formatDate(diary.createdAt)}
                                     </p>
                                 </section>
-                                <ul className="flex flex-col gap-4 w-full">
+                                <ul className="flex flex-col gap-4 w-full max-w-3xl">
                                     {diary.entries.map((entry) => (
                                         <EntryCard
                                             key={entry.id}
@@ -172,14 +171,15 @@ const EntryCard: React.FC<EntryCardProps> = ({ openEdit, openMenu, entry }) => {
                     <span className="p-2 rounded-md bg-gray-500">
                         {formatDate(entry.createdAt)}
                     </span>
-                    <button
+                    <Button
+                        variant="secondary"
                         onClick={(e) => {
                             e.stopPropagation()
                             openMenu(entry)
                         }}
                     >
                         ...
-                    </button>
+                    </Button>
                 </div>
                 <div className="flex flex-col gap-1 w-full h-fit">
                     <span>{entry.title}</span>

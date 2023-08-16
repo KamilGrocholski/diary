@@ -6,4 +6,8 @@
     body {
         @apply bg-zinc-900 text-white;
     }
+
+    .diary-container {
+        @apply mx-auto w-full max-w-3xl;
+    }
 }

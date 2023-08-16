@@ -15,7 +15,7 @@ export const diaryRouter = createTRPCRouter({
         .query(async ({ ctx, input }) => {
             const { id } = input
 
-            const diaries = await ctx.prisma.diary.findUnique({
+            const diary = await ctx.prisma.diary.findUnique({
                 where: {
                     id,
                 },
@@ -30,7 +30,7 @@ export const diaryRouter = createTRPCRouter({
                 },
             })
 
-            return diaries
+            return diary
         }),
     getAll: protectedProcedure.query(({ ctx }) => {
         return ctx.prisma.diary.findMany({

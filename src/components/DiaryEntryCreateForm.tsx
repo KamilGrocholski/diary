@@ -16,7 +16,10 @@ const QuillNoSSRWrapper = dynamic(import("react-quill"), {
     loading: () => <div>Loading</div>,
 })
 
-const DiaryEntryCreateForm: React.FC<{ diaryId: Diary["id"] }> = (props) => {
+const DiaryEntryCreateForm: React.FC<{
+    diaryId: Diary["id"]
+    onSuccess: () => void
+}> = (props) => {
     const form = useForm<DiarySchemes["addEntry"]>({
         resolver: zodResolver(diarySchemes.addEntry),
         defaultValues: {
@@ -36,6 +39,7 @@ const DiaryEntryCreateForm: React.FC<{ diaryId: Diary["id"] }> = (props) => {
     const addEntryMutation = api.diary.addEntry.useMutation({
         onSuccess: () => {
             void ctx.diary.getById.invalidate({ id: props.diaryId })
+            props.onSuccess()
         },
     })
 
@@ -54,6 +58,7 @@ const DiaryEntryCreateForm: React.FC<{ diaryId: Diary["id"] }> = (props) => {
 
     return (
         <form
+            className="diary-container"
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onSubmit={form.handleSubmit(onValid, onError)}
         >
