@@ -1,3 +1,7 @@
+import Button from "./ui/Button"
+import OverlayLoader from "./ui/OverlayLoader"
+import ShouldRender from "./ui/ShouldRender"
+import TextField from "./ui/TextField"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type { Diary } from "@prisma/client"
 import dynamic from "next/dynamic"
@@ -17,7 +21,7 @@ type DiaryEntryEditFormProps = {
         title: string
         content: string
     }
-    onSuccess: () => void
+    onSuccess?: () => void
 }
 
 const QuillNoSSRWrapper = dynamic(import("react-quill"), {
@@ -26,9 +30,13 @@ const QuillNoSSRWrapper = dynamic(import("react-quill"), {
 })
 
 const DiaryEntryEditForm: React.FC<DiaryEntryEditFormProps> = (props) => {
-    const { handleSubmit, register, setValue, watch } = useForm<
-        DiarySchemes["editEntry"]
-    >({
+    const {
+        handleSubmit,
+        register,
+        setValue,
+        watch,
+        formState: { errors },
+    } = useForm<DiarySchemes["editEntry"]>({
         resolver: zodResolver(diarySchemes.editEntry),
         defaultValues: {
             id: props.diaryId,
@@ -49,7 +57,7 @@ const DiaryEntryEditForm: React.FC<DiaryEntryEditFormProps> = (props) => {
     const editEntryMutation = api.diary.editEntry.useMutation({
         onSuccess: () => {
             void ctx.diary.getById.invalidate({ id: props.diaryId })
-            props.onSuccess()
+            props.onSuccess && props.onSuccess()
         },
     })
 
@@ -74,17 +82,24 @@ const DiaryEntryEditForm: React.FC<DiaryEntryEditFormProps> = (props) => {
 
     return (
         <form
-            className="diary-container"
+            className="diary-container relative"
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onSubmit={handleSubmit(handleOnValid, handleOnError)}
         >
-            <input className="text-black" {...register("title")} />
+            <ShouldRender if={editEntryMutation.isLoading}>
+                <OverlayLoader loadingText="Saving changes" />
+            </ShouldRender>
+            <TextField
+                label="Title"
+                errorMsg={errors.title?.message}
+                {...register("title")}
+            />
             <QuillNoSSRWrapper
                 theme="snow"
                 value={content}
                 onChange={setContent}
             />
-            <button type="submit">Save</button>
+            <Button type="submit">Save</Button>
         </form>
     )
 }

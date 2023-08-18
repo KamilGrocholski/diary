@@ -4,13 +4,19 @@ import { type ButtonHTMLAttributes } from "react"
 export type ButtonProps = {
     variant?: keyof typeof variants
     size?: keyof typeof sizes
+    shape?: keyof typeof shapes
     children: React.ReactNode
 } & ButtonHTMLAttributes<HTMLButtonElement>
 
 const variants = {
-    primary: "bg-sky-500",
-    secondary: "bg-white",
-    danger: "bg-red-500",
+    primary: "bg-rosePine-foam text-rosePine-base",
+    secondary: "bg-rosePine-foam text-rosePine-base",
+    danger: "bg-rosePine-love text-rosePine-base",
+} as const
+
+const shapes = {
+    square: "",
+    round: "rounded-md",
 } as const
 
 const sizes = {
@@ -21,15 +27,25 @@ const Button: React.FC<ButtonProps> = (props) => {
     const {
         variant = "primary",
         size = "base",
+        type = "button",
+        shape = "round",
         children,
         className,
         ...rest
     } = props
 
-    const btnClassName = clsx(variants[variant], sizes[size], className)
+    const baseClassName = "transition-all duration-100 ease-in-out"
+
+    const btnClassName = clsx(
+        shapes[shape],
+        variants[variant],
+        sizes[size],
+        className,
+        baseClassName
+    )
 
     return (
-        <button className={btnClassName} {...rest}>
+        <button type={type} className={btnClassName} {...rest}>
             {children}
         </button>
     )

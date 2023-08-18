@@ -7,7 +7,6 @@ import "react-quill/dist/quill.snow.css"
 import DiaryEntryCreateForm from "~/components/DiaryEntryCreateForm"
 import DiaryEntryEditForm from "~/components/DiaryEntryEditForm"
 import StateWrapper from "~/components/StateWrapper"
-import Button from "~/components/ui/Button"
 import Layout from "~/components/ui/Layout"
 import Modal from "~/components/ui/Modal"
 import { api } from "~/utils/api"
@@ -43,7 +42,7 @@ export default function Diary() {
 
     return (
         <>
-            <main>
+            <Layout>
                 <StateWrapper
                     isLoading={diaryQuery.isLoading}
                     isError={diaryQuery.isError}
@@ -53,15 +52,15 @@ export default function Diary() {
                             <Head>
                                 <title>{diary.title}</title>
                             </Head>
-                            <Layout>
+                            <>
                                 <button onClick={() => setIsOpenSearch(true)}>
                                     Search
                                 </button>
                                 <button
-                                    className="fixed z-50 bottom-16 right-4 bg-sky-500 rounded-full h-12 w-12"
+                                    className="transition-all duration-150 ease-in-out hover:scale-110 bg-rosePine-iris text-rosePine-base fixed z-50 bottom-8 right-4 rounded-full p-3"
                                     onClick={() => setIsOpen(true)}
                                 >
-                                    +
+                                    New entry +
                                 </button>
                                 <Modal
                                     isOpen={isOpenEditor}
@@ -71,10 +70,6 @@ export default function Diary() {
                                     }}
                                 >
                                     <DiaryEntryEditForm
-                                        onSuccess={() => {
-                                            setIsOpenEditor(false)
-                                            setEditorState(null)
-                                        }}
                                         diaryId={
                                             editorState?.diaryId as unknown as number
                                         }
@@ -112,7 +107,7 @@ export default function Diary() {
                                     </div>
                                 </Modal>
                                 <section className="my-2 flex flex-col gap-1 w-1/2 justify-start">
-                                    <h1 className="font-semibold text-lg">
+                                    <h1 className="font-semibold text-2xl">
                                         {diary.title}
                                     </h1>
                                     <p className="text-sm font-thin">
@@ -135,11 +130,11 @@ export default function Diary() {
                                         />
                                     ))}
                                 </ul>
-                            </Layout>
+                            </>
                         </>
                     )}
                 />
-            </main>
+            </Layout>
         </>
     )
 }
@@ -162,27 +157,20 @@ type EntryCardProps = {
 
 const EntryCard: React.FC<EntryCardProps> = ({ openEdit, openMenu, entry }) => {
     return (
-        <li className="w-full">
+        <li className="transition-all ease-in-out duration-100 cursor-pointer rounded-md w-full hover:bg-rosePine-highlightLow bg-rosePine-surface shadow-sm shadow-rosePine-highlightLow">
             <div
-                className="cursor-pointer flex w-full flex-row gap-3 bg-white text-black p-3 rounded-md"
+                className="flex w-full flex-row gap-3 p-3"
                 onClick={() => openEdit(entry)}
             >
                 <div className="flex flex-col gap-1 w-16">
-                    <span className="p-2 rounded-md bg-gray-500">
+                    <span className="p-2 rounded-md bg-rosePine-highlightMed">
                         {formatDate(entry.createdAt)}
                     </span>
-                    <Button
-                        variant="secondary"
-                        onClick={(e) => {
-                            e.stopPropagation()
-                            openMenu(entry)
-                        }}
-                    >
-                        ...
-                    </Button>
                 </div>
                 <div className="flex flex-col gap-1 w-full h-fit">
-                    <span>{entry.title}</span>
+                    <h1 className="pl-2 text-md font-semibold">
+                        {entry.title}
+                    </h1>
                     <QuillNoSSRWrapper
                         theme="bubble"
                         readOnly

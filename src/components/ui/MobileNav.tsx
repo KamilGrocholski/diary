@@ -11,7 +11,7 @@ const MobileNav = () => {
                         <button onClick={login}>login</button>
                     </div>
                 )}
-                User={(session, logout) => (
+                User={() => (
                     <ul className="flex flex-row justify-between w-full h-full">
                         {navMenu.map((item) => (
                             <NavButton key={item.label} {...item} />

@@ -1,3 +1,7 @@
+import Button from "./ui/Button"
+import OverlayLoader from "./ui/OverlayLoader"
+import ShouldRender from "./ui/ShouldRender"
+import TextField from "./ui/TextField"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type { Diary } from "@prisma/client"
 import dynamic from "next/dynamic"
@@ -58,17 +62,24 @@ const DiaryEntryCreateForm: React.FC<{
 
     return (
         <form
-            className="diary-container"
+            className="diary-container relative"
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onSubmit={form.handleSubmit(onValid, onError)}
         >
-            <input {...form.register("title")} />
+            <ShouldRender if={addEntryMutation.isLoading}>
+                <OverlayLoader loadingText="Creating an entry" />
+            </ShouldRender>
+            <TextField
+                label="Title"
+                errorMsg={form.formState.errors.title?.message}
+                {...form.register("title")}
+            />
             <QuillNoSSRWrapper
                 theme="snow"
                 value={content}
                 onChange={setContent}
             />
-            <button type="submit">Add</button>
+            <Button type="submit">Add</Button>
         </form>
     )
 }
