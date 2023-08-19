@@ -1,5 +1,5 @@
 export type ShouldRenderProps = {
-    if: boolean
+    if: unknown
     children: React.ReactElement
 }
 

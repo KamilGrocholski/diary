@@ -1,3 +1,4 @@
+import Spinner from "./Spinner"
 import clsx from "clsx"
 import { type ButtonHTMLAttributes } from "react"
 
@@ -6,6 +7,8 @@ export type ButtonProps = {
     size?: keyof typeof sizes
     shape?: keyof typeof shapes
     children: React.ReactNode
+    loading?: boolean
+    disabled?: boolean
 } & ButtonHTMLAttributes<HTMLButtonElement>
 
 const variants = {
@@ -31,6 +34,8 @@ const Button: React.FC<ButtonProps> = (props) => {
         shape = "round",
         children,
         className,
+        disabled,
+        loading,
         ...rest
     } = props
 
@@ -45,8 +50,14 @@ const Button: React.FC<ButtonProps> = (props) => {
     )
 
     return (
-        <button type={type} className={btnClassName} {...rest}>
-            {children}
+        <button
+            type={type}
+            className={btnClassName}
+            disabled={disabled ?? loading}
+            aria-disabled={disabled ?? loading}
+            {...rest}
+        >
+            {loading ? <Spinner /> : children}
         </button>
     )
 }

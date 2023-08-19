@@ -130,25 +130,3 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed)
-
-export const diaryOwnerProcedure = protectedProcedure
-    .input(baseDiarySchema.pick({ id: true }))
-    .use(async ({ ctx, input, next }) => {
-        const diary = await ctx.prisma.diary.findUnique({
-            where: {
-                id: input.id,
-            },
-        })
-
-        if (!diary) throw new TRPCError({ code: "NOT_FOUND" })
-        if (diary.userId !== ctx.session.user.id)
-            throw new TRPCError({ code: "UNAUTHORIZED" })
-
-        return next({
-            ctx: {
-                input: {
-                    diaryId: diary.id,
-                },
-            },
-        })
-    })

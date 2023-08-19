@@ -1,5 +1,5 @@
 import Button from "./ui/Button"
-import OverlayLoader from "./ui/OverlayLoader"
+import OverlayInfo from "./ui/OverlayLoader"
 import ShouldRender from "./ui/ShouldRender"
 import TextField from "./ui/TextField"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -87,7 +87,7 @@ const DiaryEntryEditForm: React.FC<DiaryEntryEditFormProps> = (props) => {
             onSubmit={handleSubmit(handleOnValid, handleOnError)}
         >
             <ShouldRender if={editEntryMutation.isLoading}>
-                <OverlayLoader loadingText="Saving changes" />
+                <OverlayInfo message="Saving changes" type="loader" />
             </ShouldRender>
             <TextField
                 label="Title"
@@ -99,7 +99,9 @@ const DiaryEntryEditForm: React.FC<DiaryEntryEditFormProps> = (props) => {
                 value={content}
                 onChange={setContent}
             />
-            <Button type="submit">Save</Button>
+            <Button loading={editEntryMutation.isLoading} type="submit">
+                Save
+            </Button>
         </form>
     )
 }
