@@ -7,7 +7,7 @@ export type DiaryRouterOutputs = RouterOutputs["diary"]
 export type DiaryRouterInputs = RouterInputs["diary"]
 
 const config = {
-    charsFromContentInPreview: 103,
+    charsFromContentInPreview: 503,
 } as const
 
 function assureIsDiaryOwner(userId: string, diaryOwnerId?: string) {
@@ -33,8 +33,8 @@ export const diaryRouter = createTRPCRouter({
 
             return ctx.prisma.diaryEntry.findMany({
                 where: { diaryId: input.id },
-                select: {
-                    createdAt: true,
+                include: {
+                    diary: true,
                 },
             })
         }),
@@ -78,10 +78,17 @@ export const diaryRouter = createTRPCRouter({
 
             if (diary?.entries) {
                 for (const entry of diary.entries) {
-                    entry.content = entry.content.slice(
+                    let slicedContent = entry.content.slice(
                         0,
                         config.charsFromContentInPreview
                     )
+                    if (
+                        entry.content.length > config.charsFromContentInPreview
+                    ) {
+                        slicedContent += "..."
+                    }
+
+                    entry.content = slicedContent
                 }
             }
 
@@ -187,15 +194,17 @@ export const diaryRouter = createTRPCRouter({
         .query(async ({ ctx, input }) => {
             const entry = await ctx.prisma.diaryEntry.findUnique({
                 where: { id: input.id },
-                select: { diary: { select: { userId: true } } },
-            })
-
-            assureIsDiaryOwner(ctx.session.user.id, entry?.diary?.userId)
-
-            return ctx.prisma.diaryEntry.findUnique({
-                where: {
-                    id: input.id,
+                include: {
+                    diary: {
+                        select: {
+                            userId: true,
+                        },
+                    },
                 },
             })
+
+            assureIsDiaryOwner(ctx.session.user.id, entry?.diary.userId)
+
+            return entry
         }),
 })

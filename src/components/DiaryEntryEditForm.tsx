@@ -20,6 +20,7 @@ type DiaryEntryEditFormProps = {
     diaryEntry?: {
         title: string
         content: string
+        id: number
     }
     onSuccess?: () => void
 }
@@ -56,6 +57,7 @@ const DiaryEntryEditForm: React.FC<DiaryEntryEditFormProps> = (props) => {
 
     const editEntryMutation = api.diary.editEntry.useMutation({
         onSuccess: () => {
+            void ctx.diary.getEntryById.invalidate({ id: props.diaryEntry?.id })
             void ctx.diary.getById.invalidate({ id: props.diaryId })
             props.onSuccess && props.onSuccess()
         },
@@ -99,7 +101,11 @@ const DiaryEntryEditForm: React.FC<DiaryEntryEditFormProps> = (props) => {
                 value={content}
                 onChange={setContent}
             />
-            <Button loading={editEntryMutation.isLoading} type="submit">
+            <Button
+                className="mt-5"
+                loading={editEntryMutation.isLoading}
+                type="submit"
+            >
                 Save
             </Button>
         </form>

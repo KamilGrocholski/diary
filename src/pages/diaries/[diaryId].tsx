@@ -5,7 +5,6 @@ import type {
     NextPage,
 } from "next"
 import Head from "next/head"
-import { useRouter } from "next/router"
 import { useState } from "react"
 import { AiOutlineFileAdd } from "react-icons/ai"
 import "react-quill/dist/quill.snow.css"
@@ -27,14 +26,11 @@ const DiaryPage: NextPage<
 
     const ctx = api.useContext()
 
-    const router = useRouter()
-
     const diaryQuery = api.diary.getById.useQuery(
         {
             id: diaryId,
         },
         {
-            enabled: router.isReady,
             refetchOnWindowFocus: false,
         }
     )
@@ -44,7 +40,9 @@ const DiaryPage: NextPage<
 
     const [isOpenEditEntryModal, setIsOpenEditEntryModal] =
         useState<boolean>(false)
-    const [editorState, setEditorState] = useState<DiaryEntry | null>(null)
+    const [editorState, setEditorState] = useState<DiaryEntry["id"] | null>(
+        null
+    )
 
     const [isOpenSearch, setIsOpenSearch] = useState<boolean>(false)
 
@@ -115,11 +113,7 @@ const DiaryPage: NextPage<
                                         isOpenEditEntryModal,
                                         setIsOpenEditEntryModal,
                                     ]}
-                                    editorState={[editorState, setEditorState]}
-                                    onSuccess={() => {
-                                        setEditorState(null)
-                                        setIsOpenEditEntryModal(false)
-                                    }}
+                                    entryId={editorState as unknown as number}
                                 />
                                 <DiaryEntryCreateModal
                                     openState={[
@@ -157,7 +151,7 @@ const DiaryPage: NextPage<
                                             entry={entry}
                                             openEdit={() => {
                                                 setIsOpenEditEntryModal(true)
-                                                setEditorState(entry)
+                                                setEditorState(entry.diaryId)
                                             }}
                                             openRemove={() => {
                                                 setRemoveEntryState(entry)

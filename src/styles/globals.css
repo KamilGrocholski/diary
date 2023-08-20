@@ -11,3 +11,16 @@
         @apply mx-auto w-full max-w-3xl;
     }
 }
+
+.ql-editor {
+    max-height: 75vh;
+    overflow: auto;
+}
+
+.ql-container.ql-snow {
+    border: none !important;
+}
+
+.ql-toolbar.ql-snow {
+    border: none !important;
+}

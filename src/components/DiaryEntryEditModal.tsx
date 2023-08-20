@@ -1,42 +1,47 @@
 import DiaryEntryEditForm from "./DiaryEntryEditForm"
+import StateWrapper from "./StateWrapper"
 import Modal from "./ui/Modal"
 import type { DiaryEntry } from "@prisma/client"
+import { api } from "~/utils/api"
 
 export type DiaryEntryEditModalProps = {
     openState: [boolean, React.Dispatch<React.SetStateAction<boolean>>]
-    editorState: [
-        DiaryEntry | null,
-        React.Dispatch<React.SetStateAction<DiaryEntry | null>>
-    ]
+    entryId: DiaryEntry["id"]
     onSuccess?: () => void
 }
 
 const DiaryEntryEditModal: React.FC<DiaryEntryEditModalProps> = ({
     openState,
-    editorState,
+    entryId,
     onSuccess,
 }) => {
-    const [, setIsOpen] = openState
-    const [editor, setEditor] = editorState
+    const entryQuery = api.diary.getEntryById.useQuery({ id: entryId })
 
-    if (!editor) return null
+    const [, setIsOpen] = openState
 
     return (
         <Modal
             withOpacity={false}
             openState={openState}
             onClose={() => {
-                setEditor(null)
                 setIsOpen(false)
             }}
         >
-            <DiaryEntryEditForm
-                diaryId={editor.diaryId}
-                diaryEntry={{
-                    title: editor.title,
-                    content: editor.content,
-                }}
-                onSuccess={onSuccess}
+            <StateWrapper
+                data={entryQuery.data}
+                isLoading={entryQuery.isLoading}
+                isError={entryQuery.isError}
+                NonEmpty={(entry) => (
+                    <DiaryEntryEditForm
+                        diaryId={entry.diaryId}
+                        diaryEntry={{
+                            title: entry.title,
+                            content: entry.content,
+                            id: entry.id,
+                        }}
+                        onSuccess={onSuccess}
+                    />
+                )}
             />
         </Modal>
     )

@@ -12,7 +12,7 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>((props, ref) => {
         <label className="flex flex-col gap-0.5">
             {label ? label : null}
             <input
-                className="px-2 py-1.5  border bg-rosePine-surface text-white"
+                className="px-2 py-1.5 border border-rosePine-highlightHigh bg-rosePine-surface text-rosePine-text"
                 {...rest}
                 ref={ref}
             />
