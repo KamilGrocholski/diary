@@ -22,7 +22,7 @@ const QuillNoSSRWrapper = dynamic(import("react-quill"), {
 
 const DiaryEntryCreateForm: React.FC<{
     diaryId: Diary["id"]
-    onSuccess: () => void
+    onSuccess?: () => void
 }> = (props) => {
     const form = useForm<DiarySchemes["addEntry"]>({
         resolver: zodResolver(diarySchemes.addEntry),
@@ -43,7 +43,7 @@ const DiaryEntryCreateForm: React.FC<{
     const addEntryMutation = api.diary.addEntry.useMutation({
         onSuccess: () => {
             void ctx.diary.getById.invalidate({ id: props.diaryId })
-            props.onSuccess()
+            props.onSuccess && props.onSuccess()
         },
     })
 

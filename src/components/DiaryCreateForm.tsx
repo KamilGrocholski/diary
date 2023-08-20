@@ -1,4 +1,7 @@
+import Button from "./ui/Button"
+import TextField from "./ui/TextField"
 import { zodResolver } from "@hookform/resolvers/zod"
+import type { Diary } from "@prisma/client"
 import {
     type SubmitErrorHandler,
     type SubmitHandler,
@@ -7,7 +10,11 @@ import {
 import { api } from "~/utils/api"
 import { type DiarySchemes, diarySchemes } from "~/utils/schemes/diary"
 
-const DiaryCreateForm: React.FC = () => {
+export type DiaryCreateFormProps = {
+    onSuccess: (diaryId: Diary["id"]) => void
+}
+
+const DiaryCreateForm: React.FC<DiaryCreateFormProps> = ({ onSuccess }) => {
     const form = useForm<DiarySchemes["create"]>({
         resolver: zodResolver(diarySchemes.create),
     })
@@ -15,8 +22,9 @@ const DiaryCreateForm: React.FC = () => {
     const ctx = api.useContext()
 
     const createDiaryMutation = api.diary.create.useMutation({
-        onSuccess: () => {
+        onSuccess: (data) => {
             void ctx.diary.getAll.invalidate()
+            onSuccess && onSuccess(data.id)
         },
     })
 
@@ -34,11 +42,14 @@ const DiaryCreateForm: React.FC = () => {
 
     return (
         <form
+            className="diary-container relative"
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onSubmit={form.handleSubmit(handleOnValid, handleOnError)}
         >
-            <input className="text-black" {...form.register("title")} />
-            <button type="submit">Create diary</button>
+            <TextField {...form.register("title")} />
+            <Button loading={createDiaryMutation.isLoading} type="submit">
+                Create diary
+            </Button>
         </form>
     )
 }

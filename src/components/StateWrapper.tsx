@@ -1,3 +1,5 @@
+import Spinner from "./ui/Spinner"
+
 export type StateWrapperProps<T> = {
     isLoading: boolean
     isError: boolean
@@ -33,6 +35,10 @@ const StateWrapper = <T,>({
 
 export default StateWrapper
 
-const DefaultLoading = <div>Loading</div>
+const DefaultLoading = (
+    <div>
+        <Spinner />
+    </div>
+)
 const DefaultError = <div>Error</div>
 const DefaultEmpty = <div>Empty</div>

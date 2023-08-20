@@ -13,7 +13,6 @@ import superjson from "superjson"
 import { ZodError } from "zod"
 import { getServerAuthSession } from "~/server/auth"
 import { prisma } from "~/server/db"
-import { baseDiarySchema } from "~/utils/schemes/diary"
 
 /**
  * 1. CONTEXT
@@ -37,7 +36,7 @@ interface CreateContextOptions {
  *
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
-const createInnerTRPCContext = (opts: CreateContextOptions) => {
+export const createInnerTRPCContext = (opts: CreateContextOptions) => {
     return {
         session: opts.session,
         prisma,
@@ -50,11 +49,16 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
  *
  * @see https://trpc.io/docs/context
  */
-export const createTRPCContext = async (opts: CreateNextContextOptions) => {
+export const createTRPCContext = async (
+    opts: CreateNextContextOptions,
+    skipSession?: boolean
+) => {
     const { req, res } = opts
 
     // Get the session from the server using the getServerSession wrapper function
-    const session = await getServerAuthSession({ req, res })
+    const session = skipSession
+        ? null
+        : await getServerAuthSession({ req, res })
 
     return createInnerTRPCContext({
         session,

@@ -6,18 +6,18 @@ export type NavMenuItem = {
 
 export const navMenu = [
     {
-        label: "Journals",
+        label: "Diaries",
         icon: "",
-        href: "/journals",
+        href: "/diaries",
     },
     {
         label: "Statistics",
         icon: "",
-        href: "/journals",
+        href: "/statistics",
     },
     {
         label: "Settings",
         icon: "",
-        href: "/journals",
+        href: "/settings",
     },
 ] satisfies NavMenuItem[]

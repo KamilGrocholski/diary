@@ -1,3 +1,5 @@
+import Button from "./Button"
+import { signOut } from "next-auth/react"
 import Link from "next/link"
 import { navMenu } from "~/const/config"
 
@@ -23,6 +25,19 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                                 </Link>
                             </li>
                         ))}
+                        <li className="w-full">
+                            <Button
+                                variant="danger"
+                                onClick={() => {
+                                    void signOut({
+                                        redirect: true,
+                                        callbackUrl: "/",
+                                    })
+                                }}
+                            >
+                                Logout
+                            </Button>
+                        </li>
                     </ul>
                 </div>
             </nav>
