@@ -1,4 +1,5 @@
 import Button from "./ui/Button"
+import CalendarField from "./ui/CalendarField"
 import OverlayInfo from "./ui/OverlayLoader"
 import ShouldRender from "./ui/ShouldRender"
 import TextField from "./ui/TextField"
@@ -9,6 +10,7 @@ import {
     type SubmitErrorHandler,
     type SubmitHandler,
     useForm,
+    Controller,
 } from "react-hook-form"
 import type ReactQuill from "react-quill"
 import "react-quill/dist/quill.snow.css"
@@ -20,6 +22,7 @@ type DiaryEntryEditFormProps = {
     diaryEntry?: {
         title: string
         content: string
+        date: Date
         id: number
     }
     onSuccess?: () => void
@@ -36,6 +39,7 @@ const DiaryEntryEditForm: React.FC<DiaryEntryEditFormProps> = (props) => {
         register,
         setValue,
         watch,
+        control,
         formState: { errors },
     } = useForm<DiarySchemes["editEntry"]>({
         resolver: zodResolver(diarySchemes.editEntry),
@@ -43,6 +47,7 @@ const DiaryEntryEditForm: React.FC<DiaryEntryEditFormProps> = (props) => {
             id: props.diaryId,
             title: props.diaryEntry?.title,
             content: props.diaryEntry?.content,
+            date: props.diaryEntry?.date,
         },
     })
 
@@ -72,11 +77,12 @@ const DiaryEntryEditForm: React.FC<DiaryEntryEditFormProps> = (props) => {
             id: data.id,
             title: data.title,
             content: data.content,
+            date: data.date,
         })
     }
 
     const handleOnError: SubmitErrorHandler<DiarySchemes["editEntry"]> = (
-        data,
+        _data,
         e
     ) => {
         e?.preventDefault()
@@ -95,6 +101,16 @@ const DiaryEntryEditForm: React.FC<DiaryEntryEditFormProps> = (props) => {
                 label="Title"
                 errorMsg={errors.title?.message}
                 {...register("title")}
+            />
+            <Controller
+                control={control}
+                name="date"
+                render={({ field }) => (
+                    <CalendarField
+                        onChange={(date) => field.onChange(date)}
+                        value={field.value}
+                    />
+                )}
             />
             <QuillNoSSRWrapper
                 theme="snow"

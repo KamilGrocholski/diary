@@ -20,7 +20,7 @@ model DiaryEntry {
     content   String
     diary     Diary    @relation(fields: [diaryId], references: [id])
     diaryId   Int
-    date      DateTime @default(now())
+    date      DateTime
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }

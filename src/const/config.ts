@@ -21,3 +21,5 @@ export const navMenu = [
         href: "/settings",
     },
 ] satisfies NavMenuItem[]
+
+export const createEntryContentPlaceholder = "Today I did..."

@@ -1,25 +1,18 @@
+import DiaryEntryEditModal from "./DiaryEntryEditModal"
 import type { DiaryEntry } from "@prisma/client"
 import dynamic from "next/dynamic"
+import { useState } from "react"
 import { FaTrash } from "react-icons/fa"
+import { diaryEntryDateFormatter } from "~/utils/dateFormatters"
 
 const QuillNoSSRWrapper = dynamic(import("react-quill"), {
     ssr: false,
     loading: () => <div>Loading</div>,
 })
 
-const dateFormatter = new Intl.DateTimeFormat("pl-PL", {
-    day: "2-digit",
-    weekday: "short",
-    month: "short",
-})
-
-function formatDate(date: Date): string {
-    return dateFormatter.format(date)
-}
-
 export type DiaryEntryCardProps = {
-    openEdit: (entry: DiaryEntry) => void
     openRemove: (entry: DiaryEntry) => void
+    openEdit: (entry: DiaryEntry) => void
     entry: DiaryEntry
 }
 
@@ -28,11 +21,10 @@ const DiaryEntryCard: React.FC<DiaryEntryCardProps> = ({
     openRemove,
     entry,
 }) => {
-    const [dayName, rest] = formatDate(entry.createdAt).split(",") as [
-        string,
-        string
-    ]
-    const dayNumber = rest.slice(1, 3)
+    const [dayName, rest] = diaryEntryDateFormatter
+        .format(entry.date)
+        .split(",") as [string, string]
+    const dayNumber = rest.slice(5, 7)
 
     return (
         <li className="transition-all ease-in-out duration-100 cursor-pointer rounded-md w-full hover:bg-rosePine-highlightLow bg-rosePine-surface shadow-sm shadow-rosePine-highlightLow">

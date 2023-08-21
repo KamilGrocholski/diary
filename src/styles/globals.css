@@ -8,13 +8,19 @@
     }
 
     .diary-container {
-        @apply mx-auto w-full max-w-3xl;
+        @apply mx-auto w-full max-w-3xl p-3 md:p-0;
     }
 }
 
 .ql-editor {
     max-height: 75vh;
+    font-size: 16px;
     overflow: auto;
+}
+
+.quill > .ql-container > .ql-editor.ql-blank::before {
+    font-size: 16px;
+    color: white;
 }
 
 .ql-container.ql-snow {

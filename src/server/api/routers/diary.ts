@@ -15,12 +15,31 @@ function assureIsDiaryOwner(userId: string, diaryOwnerId?: string) {
     if (userId !== diaryOwnerId) {
         throw new TRPCError({
             code: "UNAUTHORIZED",
-            message: "You are not the owner of the diary!",
+            message: "You do not own the diary!",
         })
     }
 }
 
 export const diaryRouter = createTRPCRouter({
+    edit: protectedProcedure
+        .input(diarySchemes.edit)
+        .mutation(async ({ ctx, input }) => {
+            const diary = await ctx.prisma.diary.findUnique({
+                where: { id: input.id },
+                select: { userId: true },
+            })
+
+            assureIsDiaryOwner(ctx.session.user.id, diary?.userId)
+
+            return ctx.prisma.diary.update({
+                where: {
+                    id: input.id,
+                },
+                data: {
+                    title: input.title,
+                },
+            })
+        }),
     diaryActivityById: protectedProcedure
         .input(diarySchemes.getById)
         .query(async ({ ctx, input }) => {
@@ -54,6 +73,7 @@ export const diaryRouter = createTRPCRouter({
                             updatedAt: true,
                             diaryId: true,
                             id: true,
+                            date: true,
                             diary: {
                                 select: {
                                     userId: true,
@@ -138,7 +158,7 @@ export const diaryRouter = createTRPCRouter({
     addEntry: protectedProcedure
         .input(diarySchemes.addEntry)
         .mutation(async ({ ctx, input }) => {
-            const { title, content, id } = input
+            const { title, content, id, date } = input
 
             const diary = await ctx.prisma.diary.findUnique({
                 where: { id },
@@ -152,6 +172,7 @@ export const diaryRouter = createTRPCRouter({
                     diaryId: id,
                     title,
                     content,
+                    date,
                 },
             })
         }),
@@ -186,6 +207,7 @@ export const diaryRouter = createTRPCRouter({
                 data: {
                     content: input.content,
                     title: input.title,
+                    date: input.date,
                 },
             })
         }),

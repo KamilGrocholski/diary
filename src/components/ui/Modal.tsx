@@ -5,7 +5,7 @@ import clsx from "clsx"
 
 export type ModalProps = {
     openState: [boolean, React.Dispatch<React.SetStateAction<boolean>>]
-    onClose: () => void
+    onClose?: () => void
     children: React.ReactNode
     hideCloseButton?: boolean
     withOpacity?: boolean

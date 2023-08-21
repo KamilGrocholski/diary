@@ -10,7 +10,8 @@ export type BaseDiaryEntrySchema = z.infer<typeof baseDiaryEntrySchema>
 export const baseDiaryEntrySchema = z.object({
     id: z.number().int(),
     title: z.string().min(1).max(55),
-    content: z.string().max(10000),
+    content: z.string().max(10000).default(""),
+    date: z.date(),
 })
 
 type _DiarySchemes = typeof diarySchemes
@@ -21,16 +22,19 @@ export const diarySchemes = {
     create: baseDiarySchema.pick({ title: true }),
     getById: baseDiarySchema.pick({ id: true }),
     remove: baseDiarySchema.pick({ id: true }),
+    edit: baseDiarySchema.pick({ id: true, title: true }),
     addEntry: baseDiaryEntrySchema
         .pick({
             title: true,
             content: true,
+            date: true,
         })
         .and(baseDiarySchema.pick({ id: true })),
     editEntry: baseDiaryEntrySchema.pick({
         id: true,
         title: true,
         content: true,
+        date: true,
     }),
     removeEntry: baseDiaryEntrySchema.pick({
         id: true,

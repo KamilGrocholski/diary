@@ -4,20 +4,37 @@ import type {
     InferGetServerSidePropsType,
     NextPage,
 } from "next"
+import dynamic from "next/dynamic"
 import Head from "next/head"
 import { useState } from "react"
 import { AiOutlineFileAdd } from "react-icons/ai"
+import { CiEdit } from "react-icons/ci"
 import "react-quill/dist/quill.snow.css"
-import ConfirmationModal from "~/components/ConfirmationModal"
+import DiaryEditForm from "~/components/DiaryEditForm"
 import DiaryEntryCard from "~/components/DiaryEntryCard"
-import DiaryEntryCreateModal from "~/components/DiaryEntryCreateModal"
-import DiaryEntryEditModal from "~/components/DiaryEntryEditModal"
 import StateWrapper from "~/components/StateWrapper"
 import Layout from "~/components/ui/Layout"
 import ShouldRender from "~/components/ui/ShouldRender"
 import { createSSGHelper } from "~/server/api/utils/ssg"
 import { getServerAuthSession } from "~/server/auth"
 import { api } from "~/utils/api"
+import { diaryDateFormatter } from "~/utils/dateFormatters"
+
+const DiaryEntryCreateModal = dynamic(
+    import("~/components/DiaryEntryCreateModal"),
+    {
+        ssr: false,
+    }
+)
+const DiaryEntryEditModal = dynamic(
+    import("~/components/DiaryEntryEditModal"),
+    {
+        ssr: false,
+    }
+)
+const ConfirmationModal = dynamic(import("~/components/ConfirmationModal"), {
+    ssr: false,
+})
 
 const DiaryPage: NextPage<
     InferGetServerSidePropsType<typeof getServerSideProps>
@@ -38,19 +55,21 @@ const DiaryPage: NextPage<
     const [isOpenCreateEntryModal, setIsOpenCreateEntryModal] =
         useState<boolean>(false)
 
-    const [isOpenEditEntryModal, setIsOpenEditEntryModal] =
-        useState<boolean>(false)
-    const [editorState, setEditorState] = useState<DiaryEntry["id"] | null>(
-        null
-    )
-
     const [isOpenSearch, setIsOpenSearch] = useState<boolean>(false)
+
+    const [isEditingDiary, setIsEditingDiary] = useState<boolean>(false)
 
     const [isOpenRemoveEntryModal, setIsOpenRemoveEntryModal] =
         useState<boolean>(false)
     const [removeEntryState, setRemoveEntryState] = useState<DiaryEntry | null>(
         null
     )
+
+    const [isOpenEditEntryModal, setIsOpenEditEntryModal] =
+        useState<boolean>(false)
+    const [editEntryState, setEditEntryState] = useState<
+        DiaryEntry["id"] | null
+    >(null)
 
     const removeEntryMutation = api.diary.removeEntry.useMutation({
         onSuccess: () => {
@@ -84,14 +103,13 @@ const DiaryPage: NextPage<
                         <>
                             <Head>
                                 <title>{diary.title}</title>
-                                <meta />
                             </Head>
                             <div className="diary-container">
                                 <button onClick={() => setIsOpenSearch(true)}>
                                     Search
                                 </button>
                                 <button
-                                    className="transition-all duration-150 ease-in-out hover:scale-110 bg-rosePine-iris text-rosePine-base fixed z-50 bottom-8 right-4 rounded-full p-3 flex flex-row text-md items-center gap-1 font-semibold"
+                                    className="transition-all duration-150 ease-in-out hover:scale-110 bg-rosePine-iris text-rosePine-base fixed z-50 md:bottom-8 bottom-24 right-4 rounded-full p-3 flex flex-row text-md items-center gap-1 font-semibold"
                                     onClick={() =>
                                         setIsOpenCreateEntryModal(true)
                                     }
@@ -113,7 +131,7 @@ const DiaryPage: NextPage<
                                         isOpenEditEntryModal,
                                         setIsOpenEditEntryModal,
                                     ]}
-                                    entryId={editorState as unknown as number}
+                                    entryId={editEntryState}
                                 />
                                 <DiaryEntryCreateModal
                                     openState={[
@@ -126,20 +144,52 @@ const DiaryPage: NextPage<
                                     }
                                 />
                                 <section className="my-2 flex flex-col gap-1 w-1/2 justify-start">
-                                    <h1 className="font-semibold text-2xl">
-                                        {diary.title}
-                                    </h1>
-                                    <p className="text-sm font-thin">
-                                        <span>
-                                            {diary.createdAt.toISOString()}
+                                    <ShouldRender if={!isEditingDiary}>
+                                        <div className="flex flex-row items-center gap-1">
+                                            <h1 className="font-semibold text-2xl">
+                                                {diary.title}
+                                            </h1>
+                                            <button
+                                                onClick={() =>
+                                                    setIsEditingDiary(true)
+                                                }
+                                            >
+                                                <CiEdit />
+                                            </button>
+                                        </div>
+                                    </ShouldRender>
+                                    <ShouldRender if={isEditingDiary}>
+                                        <DiaryEditForm
+                                            id={diary.id}
+                                            title={diary.title}
+                                            onCancel={() =>
+                                                setIsEditingDiary(false)
+                                            }
+                                            onSuccess={() =>
+                                                setIsEditingDiary(false)
+                                            }
+                                        />
+                                    </ShouldRender>
+                                    <div className="text-xs font-thin flex flex-row gap-1">
+                                        <span className="italic">
+                                            created at
                                         </span>
-                                    </p>
-                                    <p className="text-sm font-thin">
-                                        <span>
-                                            last update at{" "}
-                                            {diary.updatedAt.toISOString()}
+                                        <span className="font-semibold">
+                                            {diaryDateFormatter.format(
+                                                diary.createdAt
+                                            )}
                                         </span>
-                                    </p>
+                                    </div>
+                                    <div className="text-xs font-thin flex flex-row gap-1">
+                                        <span className="italic">
+                                            last update at
+                                        </span>
+                                        <span className="font-semibold">
+                                            {diaryDateFormatter.format(
+                                                diary.updatedAt
+                                            )}
+                                        </span>
+                                    </div>
                                 </section>
                                 <ShouldRender if={!diary.entries.length}>
                                     <span>This diary has no entries.</span>
@@ -149,13 +199,13 @@ const DiaryPage: NextPage<
                                         <DiaryEntryCard
                                             key={entry.id}
                                             entry={entry}
-                                            openEdit={() => {
-                                                setIsOpenEditEntryModal(true)
-                                                setEditorState(entry.diaryId)
-                                            }}
                                             openRemove={() => {
                                                 setRemoveEntryState(entry)
                                                 setIsOpenRemoveEntryModal(true)
+                                            }}
+                                            openEdit={() => {
+                                                setEditEntryState(entry.id)
+                                                setIsOpenEditEntryModal(true)
                                             }}
                                         />
                                     ))}

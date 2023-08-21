@@ -1,4 +1,5 @@
 import Button from "./ui/Button"
+import CalendarField from "./ui/CalendarField"
 import OverlayInfo from "./ui/OverlayLoader"
 import ShouldRender from "./ui/ShouldRender"
 import TextField from "./ui/TextField"
@@ -9,9 +10,11 @@ import {
     type SubmitErrorHandler,
     type SubmitHandler,
     useForm,
+    Controller,
 } from "react-hook-form"
 import type ReactQuill from "react-quill"
 import "react-quill/dist/quill.snow.css"
+import { createEntryContentPlaceholder } from "~/const/config"
 import { api } from "~/utils/api"
 import { diarySchemes, type DiarySchemes } from "~/utils/schemes/diary"
 
@@ -28,6 +31,7 @@ const DiaryEntryCreateForm: React.FC<{
         resolver: zodResolver(diarySchemes.addEntry),
         defaultValues: {
             id: props.diaryId,
+            date: new Date(),
         },
     })
 
@@ -53,10 +57,14 @@ const DiaryEntryCreateForm: React.FC<{
             id: props.diaryId,
             title: data.title,
             content: data.content,
+            date: data.date,
         })
     }
 
-    const onError: SubmitErrorHandler<DiarySchemes["addEntry"]> = (data, e) => {
+    const onError: SubmitErrorHandler<DiarySchemes["addEntry"]> = (
+        _data,
+        e
+    ) => {
         e?.preventDefault()
     }
 
@@ -74,9 +82,20 @@ const DiaryEntryCreateForm: React.FC<{
                 errorMsg={form.formState.errors.title?.message}
                 {...form.register("title")}
             />
+            <Controller
+                control={form.control}
+                name="date"
+                render={({ field }) => (
+                    <CalendarField
+                        onChange={(date) => field.onChange(date)}
+                        value={field.value}
+                    />
+                )}
+            />
             <QuillNoSSRWrapper
                 theme="snow"
                 value={content}
+                placeholder={createEntryContentPlaceholder}
                 onChange={setContent}
             />
             <Button loading={addEntryMutation.isLoading} type="submit">

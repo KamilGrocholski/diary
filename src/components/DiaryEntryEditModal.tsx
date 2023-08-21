@@ -6,27 +6,20 @@ import { api } from "~/utils/api"
 
 export type DiaryEntryEditModalProps = {
     openState: [boolean, React.Dispatch<React.SetStateAction<boolean>>]
-    entryId: DiaryEntry["id"]
-    onSuccess?: () => void
+    entryId: DiaryEntry["id"] | null
 }
 
 const DiaryEntryEditModal: React.FC<DiaryEntryEditModalProps> = ({
     openState,
     entryId,
-    onSuccess,
 }) => {
-    const entryQuery = api.diary.getEntryById.useQuery({ id: entryId })
-
-    const [, setIsOpen] = openState
+    const entryQuery = api.diary.getEntryById.useQuery(
+        { id: entryId as unknown as number },
+        { enabled: entryId !== null }
+    )
 
     return (
-        <Modal
-            withOpacity={false}
-            openState={openState}
-            onClose={() => {
-                setIsOpen(false)
-            }}
-        >
+        <Modal withOpacity={false} openState={openState}>
             <StateWrapper
                 data={entryQuery.data}
                 isLoading={entryQuery.isLoading}
@@ -38,8 +31,8 @@ const DiaryEntryEditModal: React.FC<DiaryEntryEditModalProps> = ({
                             title: entry.title,
                             content: entry.content,
                             id: entry.id,
+                            date: entry.date,
                         }}
-                        onSuccess={onSuccess}
                     />
                 )}
             />
