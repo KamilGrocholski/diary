@@ -118,7 +118,7 @@ const DiaryEntryEditForm: React.FC<DiaryEntryEditFormProps> = (props) => {
                 onChange={setContent}
             />
             <Button
-                className="mt-5"
+                className="mt-5 md:w-fit w-full"
                 loading={editEntryMutation.isLoading}
                 type="submit"
             >

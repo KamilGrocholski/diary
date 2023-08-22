@@ -57,7 +57,13 @@ const Button: React.FC<ButtonProps> = (props) => {
             aria-disabled={disabled ?? loading}
             {...rest}
         >
-            {loading ? <Spinner /> : children}
+            {loading ? (
+                <span className="w-full flex items-center justify-center">
+                    <Spinner />
+                </span>
+            ) : (
+                children
+            )}
         </button>
     )
 }

@@ -38,11 +38,11 @@ const Modal: React.FC<ModalProps> = ({
                         "fixed inset-0 h-screen p-3 z-50 overflow-y-auto"
                     )}
                 >
-                    <div className="flex flex-col relative pt-4">
+                    <div className="flex flex-col relative pt-4 h-full">
                         <ShouldRender if={!hideCloseButton}>
                             <Button
                                 variant="danger"
-                                className="absolute top-0 right-2"
+                                className="z-50 absolute md:top-0 top-[90%] right-2"
                                 onClick={handleClose}
                             >
                                 &times;

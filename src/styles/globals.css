@@ -12,8 +12,14 @@
     }
 }
 
+@media (min-height: 800px) {
+    .ql-editor {
+        max-height: 70vh;
+    }
+}
+
 .ql-editor {
-    max-height: 75vh;
+    max-height: 50vh;
     font-size: 16px;
     overflow: auto;
 }

@@ -23,7 +23,7 @@ const LandingPage: NextPage<
                 <section className="absolute w-full h-full">
                     <div className="container mx-auto px-4 h-full">
                         <div className="flex content-center items-center justify-center h-full">
-                            <div className="w-full lg:w-4/12 px-4">
+                            <div className="md:w-fit min-w-[300px] px-4">
                                 <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-rosePineDawn-text border-0 shadow-rosePine-highlightLow">
                                     <div className="rounded-t mb-0 px-6 py-6">
                                         <div className="text-center mb-3">
@@ -31,7 +31,7 @@ const LandingPage: NextPage<
                                                 Sign in with
                                             </h6>
                                         </div>
-                                        <div className="w-full flex md:flex-row flex-col md:justify-between">
+                                        <div className="w-full flex md:flex-row gap-2 flex-col md:justify-between">
                                             <LoginBtn
                                                 icon={<BsGithub />}
                                                 name="Github"
@@ -72,7 +72,7 @@ const LoginBtn: React.FC<{
 }> = ({ icon, action, name }) => {
     return (
         <button
-            className="transition-all duration-200 ease-in-out bg-rosePine-base active:bg-gray-100 px-4 py-2 rounded outline-none focus:outline-none mr-1 mb-1 uppercase flex flex-row justify-center shadow hover:shadow-md  items-center font-bold text-xs gap-2 hover:bg-rosePine-iris hover:text-rosePine-base"
+            className="transition-all duration-200 ease-in-out bg-rosePine-base active:bg-gray-100 md:px-4 px-6 md:py-2 py-4 rounded outline-none focus:outline-none mr-1 mb-1 uppercase flex flex-row justify-center shadow hover:shadow-md  items-center font-bold text-xs gap-2 hover:bg-rosePine-iris hover:text-rosePine-base"
             type="button"
             onClick={action}
         >
