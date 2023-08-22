@@ -1,7 +1,5 @@
-import DiaryEntryEditModal from "./DiaryEntryEditModal"
 import type { DiaryEntry } from "@prisma/client"
 import dynamic from "next/dynamic"
-import { useState } from "react"
 import { FaTrash } from "react-icons/fa"
 import { diaryEntryDateFormatter } from "~/utils/dateFormatters"
 
@@ -11,8 +9,8 @@ const QuillNoSSRWrapper = dynamic(import("react-quill"), {
 })
 
 export type DiaryEntryCardProps = {
-    openRemove: (entry: DiaryEntry) => void
     openEdit: (entry: DiaryEntry) => void
+    openRemove: (entry: DiaryEntry) => void
     entry: DiaryEntry
 }
 

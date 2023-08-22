@@ -14,7 +14,7 @@ import { diarySchemes, type DiarySchemes } from "~/utils/schemes/diary"
 export type DiaryEditFormProps = {
     id: Diary["id"]
     title: Diary["title"]
-    onSuccess: () => void
+    onSuccess?: () => void
     onCancel: () => void
 }
 
@@ -32,7 +32,7 @@ const DiaryEditForm: React.FC<DiaryEditFormProps> = (props) => {
     const editDiaryMutation = api.diary.edit.useMutation({
         onSuccess: () => {
             void ctx.diary.getById.invalidate({ id: props.id })
-            props.onSuccess()
+            props.onSuccess && props.onSuccess()
         },
     })
 

@@ -109,7 +109,7 @@ const DiaryPage: NextPage<
                                     Search
                                 </button>
                                 <button
-                                    className="transition-all duration-150 ease-in-out hover:scale-110 bg-rosePine-iris text-rosePine-base fixed z-50 md:bottom-8 bottom-24 right-4 rounded-full p-3 flex flex-row text-md items-center gap-1 font-semibold"
+                                    className="transition-all duration-150 ease-in-out hover:scale-110 bg-rosePine-iris text-rosePine-base fixed z-50 md:bottom-8 bottom-8 right-4 rounded-full p-3 flex flex-row text-md items-center gap-1 font-semibold"
                                     onClick={() =>
                                         setIsOpenCreateEntryModal(true)
                                     }
@@ -132,6 +132,9 @@ const DiaryPage: NextPage<
                                         setIsOpenEditEntryModal,
                                     ]}
                                     entryId={editEntryState}
+                                    onClose={() => {
+                                        setEditEntryState(null)
+                                    }}
                                 />
                                 <DiaryEntryCreateModal
                                     openState={[
@@ -163,9 +166,6 @@ const DiaryPage: NextPage<
                                             id={diary.id}
                                             title={diary.title}
                                             onCancel={() =>
-                                                setIsEditingDiary(false)
-                                            }
-                                            onSuccess={() =>
                                                 setIsEditingDiary(false)
                                             }
                                         />

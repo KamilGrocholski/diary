@@ -44,7 +44,7 @@ const DiaryEntryEditForm: React.FC<DiaryEntryEditFormProps> = (props) => {
     } = useForm<DiarySchemes["editEntry"]>({
         resolver: zodResolver(diarySchemes.editEntry),
         defaultValues: {
-            id: props.diaryId,
+            id: props.diaryEntry?.id,
             title: props.diaryEntry?.title,
             content: props.diaryEntry?.content,
             date: props.diaryEntry?.date,

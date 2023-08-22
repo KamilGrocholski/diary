@@ -84,7 +84,7 @@ export const diaryRouter = createTRPCRouter({
                             content: true,
                         },
                         orderBy: {
-                            createdAt: "desc",
+                            date: "desc",
                         },
                     },
                     _count: true,
@@ -202,7 +202,7 @@ export const diaryRouter = createTRPCRouter({
 
             assureIsDiaryOwner(ctx.session.user.id, entry?.diary?.userId)
 
-            return ctx.prisma.diaryEntry.update({
+            return await ctx.prisma.diaryEntry.update({
                 where: { id: input.id },
                 data: {
                     content: input.content,

@@ -7,11 +7,13 @@ import { api } from "~/utils/api"
 export type DiaryEntryEditModalProps = {
     openState: [boolean, React.Dispatch<React.SetStateAction<boolean>>]
     entryId: DiaryEntry["id"] | null
+    onClose: () => void
 }
 
 const DiaryEntryEditModal: React.FC<DiaryEntryEditModalProps> = ({
     openState,
     entryId,
+    onClose,
 }) => {
     const entryQuery = api.diary.getEntryById.useQuery(
         { id: entryId as unknown as number },
@@ -19,7 +21,7 @@ const DiaryEntryEditModal: React.FC<DiaryEntryEditModalProps> = ({
     )
 
     return (
-        <Modal withOpacity={false} openState={openState}>
+        <Modal withOpacity={false} openState={openState} onClose={onClose}>
             <StateWrapper
                 data={entryQuery.data}
                 isLoading={entryQuery.isLoading}

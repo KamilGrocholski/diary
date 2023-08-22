@@ -9,7 +9,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
     return (
         <div className="min-h-screen flex w-full relative">
-            <nav className="md:block absolute bottom-0 left-0 right-0 py-4 px-2 w-full md:w-56 flex-none bg-rosePine-surface border-r border-rosePine-highlightLow ">
+            <nav className="md:flex absolute h-fit md:h-full bottom-0 left-0 right-0 py-4 px-2 w-full md:w-56 flex-none bg-rosePine-surface border-r border-rosePine-highlightLow ">
                 <div className="w-full text-center gap-24 flex flex-col">
                     <Link
                         href="/"
